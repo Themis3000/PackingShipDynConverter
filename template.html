@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<body>
+<div id="outline" class="border">
+    <div class="header">
+        <img src="logo.jpg" alt="logo"/>
+        <div>
+            <b class="largeHeading">{name}</b>
+            <div id="site">{url}</div>
+        </div>
+    </div>
+    <div id="info">
+        <div id="leftContent">
+            {left_content}
+        </div>
+        <div id="rightContent">
+            {right_content}
+        </div>
+    </div>
+    <hr>
+    <b>{item_amount_str}</b>
+    <hr>
+    <div class="item">
+        {items}
+    </div>
+    <hr>
+    <div class="summaryItem">
+        <div>Item total</div>
+        <div>{item_total}</div>
+    </div>
+    <div class="summaryItem">
+        <div>Tax</div>
+        <div>{tax}</div>
+    </div>
+    <div class="summaryItem">
+        <div>Shipping total</div>
+        <div>{shipping_total}</div>
+    </div>
+    <div class="summaryItem">
+        <b>Order total</b>
+        <b>{order_total}</b>
+    </div>
+</div>
+</body>
+<head>
+<style>
+    html, body {
+        width: 3.75in;
+        height: 6in;
+        font-size: 9.4pt;
+        font-family: Arial,sans-serif;
+    }
+    img {
+        width: .4in;
+        height: .4in;
+        padding-right: 0.15in;
+    }
+    .border {
+        outline: 1pt solid black;
+    }
+    .header {
+        display: flex;
+    }
+    .largeHeading {
+        font-size: 13.6pt;
+    }
+    #site {
+        text-align: center;
+    }
+    #info {
+        display: flex;
+    }
+    #leftContent {
+        width: 1.75in;
+        margin-right: 0.25in;
+    }
+    #rightContent {
+        width: 1.75in;
+    }
+    #outline {
+        padding: 0.15in;
+    }
+    .valueContainer {
+        padding-top: 0.1in;
+    }
+    .item {
+        display: flex;
+        justify-content: space-between;
+    }
+    .itemLeft {
+        display: flex;
+    }
+    .itemRight {
+        margin-left: 0.15in;
+        flex-shrink: 0;
+    }
+    .summaryItem {
+        display: flex;
+        justify-content: space-between;
+    }
+</style>
+</head>
+</html>

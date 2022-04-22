@@ -32,8 +32,8 @@ for element in page_iter:
             shop_info = text.split("\n")
             order_data["shop_name"] = shop_info[0]
             order_data["shop_url"] = shop_info[1]
-        elif text.endswith(" item"):
-            order_data["total_quantity"] = text[:-5]
+        elif text.endswith(" item") or text.endswith(" items"):
+            order_data["total_quantity"] = text[:]
             order_data["items"] = []
             while True:
                 item_name = get_next_element().replace("\n", "")
@@ -60,20 +60,72 @@ for element in page_iter:
             order_data["buyer_id"] = buyer_identity[2]
         elif text.startswith("Payment method\n"):
             order_data["payment_method"] = text[15:]
+        elif text.startswith("Scheduled to ship by\n"):
+            order_data["ship_by"] = text[21:]
+
+print(order_data)
 
 # html builder
-with open("template.html", "w") as f:
-    html_out = f.read()
+with open("template.html", "r") as f:
+    html_out = f.read().replace("\n", "")
 
 components = {}
-for file_path in glob.glob("/components/*.html"):
+for file_path in glob.glob("./components/*.html"):
     with open(file_path, "r") as f:
-        components[os.path.basename(file_path)] = f.read()
+        components[os.path.basename(file_path)] = f.read().replace("\n", "")
 
 
-def template_value(template, key, value):
-    return template.replace("{" + key + "}", value)
+def template_values(template, values):
+    for key, value in values.items():
+        html_value = value.replace("\n", "<br>")
+        template = template.replace("{" + key + "}", html_value)
+    return template
+
+
+def use_component(component, values):
+    template = components[f"{component}.html"]
+    return template_values(template, values)
+
+
+def img_to_str(img):
+    img_buffer = BytesIO()
+    img.save(img_buffer, format="JPEG")
+    img_str = base64.b64encode(img_buffer.getvalue()).decode("utf-8")
+    return img_str
 
 
 left_content = ""
-right_content
+right_content = ""
+items_html = ""
+
+left_content += use_component("value", {"title": "Ship to", "value": order_data["ship_to"]})
+left_content += use_component("value", {"title": "Scheduled to ship by", "value": order_data["ship_by"]})
+left_content += use_component("value", {"title": "Order", "value": order_data["order_number"]})
+left_content += use_component("value_with_bold", {"title": "Buyer", "value": order_data["buyer_name"], "bolded_value": order_data["buyer_id"]})
+# add shipping method here
+
+right_content += use_component("value", {"title": "From", "value": order_data["ship_from"]})
+right_content += use_component("value", {"title": "Order date", "value": order_data["order_date"]})
+right_content += use_component("value", {"title": "Payment method", "value": order_data["payment_method"]})
+# add tracking here
+
+for item_num, item in enumerate(order_data["items"]):
+    img_str = img_to_str(images[item_num+1])
+    items_html += use_component("item", {"name": item["name"], "quantity": item["quantity"], "img_b64": img_str})
+
+html_out = template_values(html_out, {
+    "left_content": left_content,
+    "right_content": right_content,
+    "item_amount_str": order_data['total_quantity'],
+    "items": items_html,
+    "item_total": order_data["item_total"],
+    "tax": order_data["tax"],
+    "shipping_total": order_data["shipping_total"],
+    "order_total": order_data["order_total"],
+    "logo_b64": img_to_str(images[0]),
+    "name": order_data["shop_name"],
+    "url": order_data["shop_url"]
+})
+
+with open("out.html", "w") as f:
+    f.write(html_out)

@@ -1,6 +1,6 @@
 import glob
 import os
-
+import re
 from pdfminer.high_level import extract_pages
 from pdfminer.layout import LTFigure, LTText
 from PIL import Image
@@ -8,7 +8,8 @@ import base64
 from io import BytesIO
 
 page_layout = next(extract_pages("in.pdf"))
-page_iter = iter(page_layout)
+page_list = list(page_layout)
+page_iter = iter(page_list)
 
 images = []
 order_data = {}
@@ -17,6 +18,17 @@ order_data = {}
 def get_next_element():
     return next(page_iter).get_text()[:-1]
 
+
+# Item extraction
+order_data["items"] = []
+quantity_pattern = re.compile(r"\d* x \$\d*\.\d{2}")
+for index, element in enumerate(page_list):
+    if isinstance(element, LTText):
+        text = element.get_text()[:-1]
+        if quantity_pattern.match(text):
+            quantity = text
+            name = page_list[index-1].get_text()[:-1]
+            order_data["items"].append({"name": name, "quantity": quantity})
 
 # Data extraction loop
 for element in page_iter:
@@ -32,18 +44,11 @@ for element in page_iter:
             shop_info = text.split("\n")
             order_data["shop_name"] = shop_info[0]
             order_data["shop_url"] = shop_info[1]
-        elif text.endswith(" item") or text.endswith(" items"):
-            order_data["total_quantity"] = text[:]
-            order_data["items"] = []
-            while True:
-                item_name = get_next_element().replace("\n", "")
-                if item_name == "Item total":
-                    # Skips the item total, tax, shipping total, and order total boxes before breaking
-                    next(page_iter)
-                    next(page_iter)
-                    next(page_iter)
-                    break
-                order_data["items"].append({"name": item_name, "quantity": get_next_element()})
+        elif text == "Item total":
+            # Skips the item total, tax, shipping total, and order total
+            next(page_iter)
+            next(page_iter)
+            next(page_iter)
             order_data["item_total"] = get_next_element()
             order_data["tax"] = get_next_element()
             order_data["shipping_total"] = get_next_element()
@@ -116,7 +121,7 @@ for item_num, item in enumerate(order_data["items"]):
 html_out = template_values(html_out, {
     "left_content": left_content,
     "right_content": right_content,
-    "item_amount_str": order_data['total_quantity'],
+    "item_amount_str": f"{len(order_data['items'])} items",
     "items": items_html,
     "item_total": order_data["item_total"],
     "tax": order_data["tax"],

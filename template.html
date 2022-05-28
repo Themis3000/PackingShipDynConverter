@@ -24,22 +24,7 @@
         {items}
     </div>
     <hr>
-    <div class="summaryItem">
-        <div>Item total</div>
-        <div>{item_total}</div>
-    </div>
-    <div class="summaryItem">
-        <div>Tax</div>
-        <div>{tax}</div>
-    </div>
-    <div class="summaryItem">
-        <div>Shipping total</div>
-        <div>{shipping_total}</div>
-    </div>
-    <div class="summaryItem">
-        <b>Order total</b>
-        <b>{order_total}</b>
-    </div>
+    {bottom_content}
 </div>
 </body>
 <head>
@@ -84,6 +69,7 @@
         padding-top: 0.1in;
     }
     .item {
+        width: 100%;
         display: flex;
         justify-content: space-between;
     }

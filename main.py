@@ -46,10 +46,19 @@ for element in page_iter:
             order_data["shop_url"] = shop_info[1]
         elif text == "Item total":
             # Skips the item total, tax, shipping total, and order total
+            has_discount = get_next_element() == "Shop discount"
             next(page_iter)
-            next(page_iter)
+            order_data["has_discount"] = False
+            # Additionally, skip two more if there's a discount
+            if has_discount:
+                order_data["has_discount"] = True
+                next(page_iter)
+                next(page_iter)
             next(page_iter)
             order_data["item_total"] = get_next_element()
+            if has_discount:
+                order_data["shop_discount"] = get_next_element()
+                order_data["subtotal"] = get_next_element()
             order_data["tax"] = get_next_element()
             order_data["shipping_total"] = get_next_element()
             order_data["order_total"] = get_next_element()
@@ -102,6 +111,7 @@ def img_to_str(img):
 left_content = ""
 right_content = ""
 items_html = ""
+bottom_content = ""
 
 left_content += use_component("value", {"title": "Ship to", "value": order_data["ship_to"]})
 left_content += use_component("value", {"title": "Scheduled to ship by", "value": order_data["ship_by"]})
@@ -114,6 +124,14 @@ right_content += use_component("value", {"title": "Order date", "value": order_d
 right_content += use_component("value", {"title": "Payment method", "value": order_data["payment_method"]})
 # add tracking here
 
+bottom_content += use_component("summaryItem", {"title": "Item total", "value": order_data["item_total"]})
+if order_data["has_discount"]:
+    bottom_content += use_component("summaryItem", {"title": "Shop discount", "value": order_data["shop_discount"]})
+    bottom_content += use_component("summaryItem", {"title": "Subtotal", "value": order_data["subtotal"]})
+bottom_content += use_component("summaryItem", {"title": "Tax", "value": order_data["tax"]})
+bottom_content += use_component("summaryItem", {"title": "Shipping total", "value": order_data["shipping_total"]})
+bottom_content += use_component("summaryItem", {"title": "Order total", "value": order_data["order_total"]})
+
 for item_num, item in enumerate(order_data["items"]):
     img_str = img_to_str(images[item_num+1])
     items_html += use_component("item", {"name": item["name"], "quantity": item["quantity"], "img_b64": img_str})
@@ -123,14 +141,11 @@ html_out = template_values(html_out, {
     "right_content": right_content,
     "item_amount_str": f"{len(order_data['items'])} items",
     "items": items_html,
-    "item_total": order_data["item_total"],
-    "tax": order_data["tax"],
-    "shipping_total": order_data["shipping_total"],
-    "order_total": order_data["order_total"],
+    "bottom_content": bottom_content,
     "logo_b64": img_to_str(images[0]),
     "name": order_data["shop_name"],
     "url": order_data["shop_url"]
 })
 
-with open("out.html", "w") as f:
+with open("out.html", "w", encoding="utf-8") as f:
     f.write(html_out)

@@ -1,34 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
 <body>
-<div id="outline" class="border">
-    <div class="header">
-        <img src="data:image/jpeg;base64,{logo_b64}" alt="logo"/>
-        <div>
-            <b class="largeHeading">{name}</b>
-            <div id="site">{url}</div>
+    <div id="outline" class="border">
+        <div class="header">
+            <img src="data:image/jpeg;base64,{logo_b64}" alt="logo"/>
+            <div>
+                <b class="largeHeading">{name}</b>
+                <div id="site">{url}</div>
+            </div>
         </div>
-    </div>
-    <div id="info">
-        <div id="leftContent">
-            {left_content}
+        <div id="info">
+            <div id="leftContent">
+                {left_content}
+            </div>
+            <div id="rightContent">
+                {right_content}
+            </div>
         </div>
-        <div id="rightContent">
-            {right_content}
+        <hr>
+        <b>{item_amount_str}</b>
+        <hr>
+        <div class="item">
+            {items}
         </div>
+        <hr>
+        {bottom_content}
     </div>
-    <hr>
-    <b>{item_amount_str}</b>
-    <hr>
-    <div class="item">
-        {items}
-    </div>
-    <hr>
-    {bottom_content}
-</div>
+    {label}
 </body>
 <head>
 <style>
+    .label {
+        width: 5.3in;
+        height: 3.7in;
+        border: black 1pt solid;
+        font-family: "Verdana", "sans-serif";
+        font-size: 12pt;
+        position: relative;
+        margin-top: 0.25in;
+    }
+    .labelReturn {
+        padding: 0.05in;
+    }
+    .labelCenter {
+        margin: 0 auto;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
     html, body {
         width: 3.75in;
         height: 6in;

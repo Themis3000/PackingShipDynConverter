@@ -7,6 +7,13 @@ from PIL import Image
 import base64
 from io import BytesIO
 
+# Print a label (meant for 5x7 envelopes). The label contains a return address and destination address. Only intended
+# for hand sorted letter mail.
+PRINT_LABEL = True
+# The last line on the address is the country name, which is likely not necessary for sending in the mail. You may
+# remove the last line if you wish.
+LABEL_REMOVE_LAST_LINE = True
+
 page_layout = next(extract_pages("in.pdf"))
 page_list = list(page_layout)
 page_iter = iter(page_list)
@@ -108,6 +115,10 @@ def img_to_str(img):
     return img_str
 
 
+def remove_last_line(s):
+    return s[:s.rfind('\n')]
+
+
 left_content = ""
 right_content = ""
 items_html = ""
@@ -132,6 +143,15 @@ bottom_content += use_component("summaryItem", {"title": "Tax", "value": order_d
 bottom_content += use_component("summaryItem", {"title": "Shipping total", "value": order_data["shipping_total"]})
 bottom_content += use_component("summaryItem", {"title": "Order total", "value": order_data["order_total"]})
 
+label = ""
+if PRINT_LABEL:
+    return_addr = order_data["ship_from"]
+    send_addr = order_data["ship_to"]
+    if LABEL_REMOVE_LAST_LINE:
+        return_addr = remove_last_line(return_addr)
+        send_addr = remove_last_line(send_addr)
+    label = use_component("label", {"return_addr": return_addr, "send_addr": send_addr})
+
 for item_num, item in enumerate(order_data["items"]):
     img_str = img_to_str(images[item_num+1])
     items_html += use_component("item", {"name": item["name"], "quantity": item["quantity"], "img_b64": img_str})
@@ -144,7 +164,8 @@ html_out = template_values(html_out, {
     "bottom_content": bottom_content,
     "logo_b64": img_to_str(images[0]),
     "name": order_data["shop_name"],
-    "url": order_data["shop_url"]
+    "url": order_data["shop_url"],
+    "label": label
 })
 
 with open("out.html", "w", encoding="utf-8") as f:

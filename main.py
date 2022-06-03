@@ -83,6 +83,11 @@ for element in page_iter:
             order_data["payment_method"] = text[15:]
         elif text.startswith("Scheduled to ship by\n"):
             order_data["ship_by"] = text[21:]
+        elif text.startswith("Tracking\n"):
+            tracking_data = text.split("\n")
+            order_data["has_shipping_info"] = True
+            order_data["tracking_number"] = tracking_data[1]
+            order_data["tracking_via"] = tracking_data[2]
 
 print(order_data)
 
@@ -128,12 +133,12 @@ left_content += use_component("value", {"title": "Ship to", "value": order_data[
 left_content += use_component("value", {"title": "Scheduled to ship by", "value": order_data["ship_by"]})
 left_content += use_component("value", {"title": "Order", "value": order_data["order_number"]})
 left_content += use_component("value_with_bold", {"title": "Buyer", "value": order_data["buyer_name"], "bolded_value": order_data["buyer_id"]})
-# add shipping method here
 
 right_content += use_component("value", {"title": "From", "value": order_data["ship_from"]})
 right_content += use_component("value", {"title": "Order date", "value": order_data["order_date"]})
 right_content += use_component("value", {"title": "Payment method", "value": order_data["payment_method"]})
-# add tracking here
+if order_data.get("has_shipping_info"):
+    right_content += use_component("value_with_bold", {"title": "Tracking", "value": order_data["tracking_number"], "bolded_value": order_data["tracking_via"]})
 
 bottom_content += use_component("summaryItem", {"title": "Item total", "value": order_data["item_total"]})
 if order_data["has_discount"]:

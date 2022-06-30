@@ -35,7 +35,10 @@ for index, element in enumerate(page_list):
         if quantity_pattern.match(text):
             quantity = text
             name = page_list[index-1].get_text()[:-1]
-            order_data["items"].append({"name": name, "quantity": quantity})
+            personalization = page_list[index+1].get_text().replace("\n", " ")
+            if not personalization.startswith("Personalization: "):
+                personalization = ""
+            order_data["items"].append({"name": name, "quantity": quantity, "personalization": personalization})
 
 # Data extraction loop
 for element in page_iter:
@@ -159,7 +162,12 @@ if PRINT_LABEL:
 
 for item_num, item in enumerate(order_data["items"]):
     img_str = img_to_str(images[item_num+1])
-    items_html += use_component("item", {"name": item["name"], "quantity": item["quantity"], "img_b64": img_str})
+    items_html += use_component("item", {
+        "name": item["name"],
+        "quantity": item["quantity"],
+        "item_message": item["personalization"],
+        "img_b64": img_str
+    })
 
 html_out = template_values(html_out, {
     "left_content": left_content,

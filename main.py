@@ -34,7 +34,7 @@ for index, element in enumerate(page_list):
         text = element.get_text()[:-1]
         if quantity_pattern.match(text):
             quantity = text
-            name = page_list[index-1].get_text()[:-1]
+            name = page_list[index-1].get_text()[:-1].replace("\n", " ")
             personalization = page_list[index+1].get_text().replace("\n", " ")
             if not personalization.startswith("Personalization: "):
                 personalization = ""

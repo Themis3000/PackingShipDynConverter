@@ -48,8 +48,8 @@ for element in page_iter:
         images.append(img)
     if isinstance(element, LTText):
         text = element.get_text()[:-1]
-        if text.startswith("Ship to\n"):
-            order_data["ship_to"] = text[8:]
+        if text.startswith("Deliver to\n"):
+            order_data["ship_to"] = text[11:]
         elif text.endswith(".etsy.com"):
             shop_info = text.split("\n")
             order_data["shop_name"] = shop_info[0]
@@ -84,8 +84,8 @@ for element in page_iter:
             order_data["buyer_id"] = buyer_identity[2]
         elif text.startswith("Payment method\n"):
             order_data["payment_method"] = text[15:]
-        elif text.startswith("Scheduled to ship by\n"):
-            order_data["ship_by"] = text[21:]
+        elif text.startswith("Scheduled to dispatch by\n"):
+            order_data["ship_by"] = text[25:]
         elif text.startswith("Tracking\n"):
             tracking_data = text.split("\n")
             order_data["has_shipping_info"] = True

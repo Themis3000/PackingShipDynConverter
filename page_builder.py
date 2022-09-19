@@ -70,7 +70,6 @@ for file_path in glob.glob("./components/*.html"):
     with open(file_path, "r") as f:
         components[os.path.basename(file_path)] = f.read().replace("\n", "")
 
-# html builder
 with open("./template.html", "r") as f:
     html_out = f.read().replace("\n", "")
 

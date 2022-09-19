@@ -1,8 +1,4 @@
-import glob
-import os
 from pdfminer.high_level import extract_pages
-import base64
-from io import BytesIO
 from extract_page import extract_page_data
 from page_builder import page_builder
 

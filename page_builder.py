@@ -6,34 +6,6 @@ from config import PRINT_LABEL, LABEL_REMOVE_LAST_LINE
 
 
 def page_builder(order_data, images):
-    # html builder
-    with open("./template.html", "r") as f:
-        html_out = f.read().replace("\n", "")
-
-    components = {}
-    for file_path in glob.glob("./components/*.html"):
-        with open(file_path, "r") as f:
-            components[os.path.basename(file_path)] = f.read().replace("\n", "")
-
-    def template_values(template, values):
-        for key, value in values.items():
-            html_value = value.replace("\n", "<br>")
-            template = template.replace("{" + key + "}", html_value)
-        return template
-
-    def use_component(component, values):
-        template = components[f"{component}.html"]
-        return template_values(template, values)
-
-    def img_to_str(img):
-        img_buffer = BytesIO()
-        img.save(img_buffer, format="JPEG")
-        img_str = base64.b64encode(img_buffer.getvalue()).decode("utf-8")
-        return img_str
-
-    def remove_last_line(s):
-        return s[:s.rfind('\n')]
-
     left_content = ""
     right_content = ""
     items_html = ""
@@ -89,6 +61,38 @@ def page_builder(order_data, images):
         "url": order_data["shop_url"],
         "label": label
     })
-    html_out = template_values(html_out, {"body": body_content})
 
-    return html_out
+    return body_content
+
+
+components = {}
+for file_path in glob.glob("./components/*.html"):
+    with open(file_path, "r") as f:
+        components[os.path.basename(file_path)] = f.read().replace("\n", "")
+
+# html builder
+with open("./template.html", "r") as f:
+    html_out = f.read().replace("\n", "")
+
+
+def template_values(template, values):
+    for key, value in values.items():
+        html_value = value.replace("\n", "<br>")
+        template = template.replace("{" + key + "}", html_value)
+    return template
+
+
+def use_component(component, values):
+    template = components[f"{component}.html"]
+    return template_values(template, values)
+
+
+def img_to_str(img):
+    img_buffer = BytesIO()
+    img.save(img_buffer, format="JPEG")
+    img_str = base64.b64encode(img_buffer.getvalue()).decode("utf-8")
+    return img_str
+
+
+def remove_last_line(s):
+    return s[:s.rfind('\n')]

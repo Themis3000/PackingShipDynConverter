@@ -1,24 +1,26 @@
-<div id="outline" class="border">
-    <div class="header">
-        <img src="data:image/jpeg;base64,{logo_b64}" alt="logo"/>
-        <div>
-            <b class="largeHeading">{name}</b>
-            <div id="site">{url}</div>
+<div class="page">
+    <div class="border outline">
+        <div class="header">
+            <img src="data:image/jpeg;base64,{logo_b64}" alt="logo"/>
+            <div>
+                <b class="largeHeading">{name}</b>
+                <div class="site">{url}</div>
+            </div>
         </div>
+        <div class="info">
+            <div class="leftContent">
+                {left_content}
+            </div>
+            <div class="rightContent">
+                {right_content}
+            </div>
+        </div>
+        <hr>
+        <b>{item_amount_str}</b>
+        <hr>
+        {items}
+        <hr>
+        {bottom_content}
     </div>
-    <div id="info">
-        <div id="leftContent">
-            {left_content}
-        </div>
-        <div id="rightContent">
-            {right_content}
-        </div>
-    </div>
-    <hr>
-    <b>{item_amount_str}</b>
-    <hr>
-    {items}
-    <hr>
-    {bottom_content}
+    {label}
 </div>
-{label}

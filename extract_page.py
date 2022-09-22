@@ -71,7 +71,7 @@ def extract_page_data(page):
             elif text.startswith("Buyer\n"):
                 buyer_identity = text.split("\n")
                 order_data["buyer_name"] = buyer_identity[1]
-                order_data["buyer_id"] = buyer_identity[2]
+                order_data["buyer_id"] = buyer_identity[2] if len(buyer_identity) >= 3 else ""
             elif text.startswith("Payment method\n"):
                 order_data["payment_method"] = text[15:]
             elif text.startswith("Scheduled to dispatch by\n"):

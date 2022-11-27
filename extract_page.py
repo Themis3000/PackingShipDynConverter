@@ -16,7 +16,7 @@ def extract_page_data(page):
 
     # Item extraction
     order_data["items"] = []
-    quantity_pattern = re.compile(r"\d* x \$\d*\.\d{2}")
+    quantity_pattern = re.compile(r"\d* x [$£]\d*\.\d{2}")
     for index, element in enumerate(page_list):
         if isinstance(element, LTText):
             text = element.get_text()[:-1]

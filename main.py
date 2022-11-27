@@ -10,5 +10,5 @@ for page in pages:
     print(order_data)
     html_data += page_builder(order_data, images)
 
-with open("out.html", "w", encoding="utf-8") as f:
+with open("out.html", "w", encoding="utf-16") as f:
     f.write(template_values(html_out, {"body": html_data}))

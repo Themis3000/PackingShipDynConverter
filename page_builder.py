@@ -32,14 +32,14 @@ def page_builder(order_data, images):
     bottom_content += use_component("summaryItem", {"title": "Shipping total", "value": order_data["shipping_total"]})
     bottom_content += use_component("summaryItem", {"title": "Order total", "value": order_data["order_total"]})
 
-    label = ""
+    label_body_content = ""
     if PRINT_LABEL:
         return_addr = order_data["ship_from"]
         send_addr = order_data["ship_to"]
         if LABEL_REMOVE_LAST_LINE:
             return_addr = remove_last_line(return_addr)
             send_addr = remove_last_line(send_addr)
-        label = use_component("label", {"return_addr": return_addr, "send_addr": send_addr})
+        label_body_content = use_component("label", {"return_addr": return_addr, "send_addr": send_addr})
 
     for item_num, item in enumerate(order_data["items"]):
         img_str = img_to_str(images[item_num + 1])
@@ -50,7 +50,7 @@ def page_builder(order_data, images):
             "img_b64": img_str
         })
 
-    body_content = use_component("body", {
+    slip_body_content = use_component("body", {
         "left_content": left_content,
         "right_content": right_content,
         "item_amount_str": f"{len(order_data['items'])} items",
@@ -59,10 +59,10 @@ def page_builder(order_data, images):
         "logo_b64": img_to_str(images[0]),
         "name": order_data["shop_name"],
         "url": order_data["shop_url"],
-        "label": label
+        "label": label_body_content
     })
 
-    return body_content
+    return slip_body_content, label_body_content
 
 
 components = {}

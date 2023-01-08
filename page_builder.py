@@ -28,7 +28,8 @@ def page_builder(order_data, images):
     if order_data["has_discount"]:
         bottom_content += use_component("summaryItem", {"title": "Shop discount", "value": order_data["shop_discount"]})
         bottom_content += use_component("summaryItem", {"title": "Subtotal", "value": order_data["subtotal"]})
-    bottom_content += use_component("summaryItem", {"title": "Tax", "value": order_data["tax"]})
+    if "tax" in order_data:
+        bottom_content += use_component("summaryItem", {"title": "Tax", "value": order_data["tax"]})
     bottom_content += use_component("summaryItem", {"title": "Shipping total", "value": order_data["shipping_total"]})
     bottom_content += use_component("summaryItem", {"title": "Order total", "value": order_data["order_total"]})
 

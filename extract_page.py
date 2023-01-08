@@ -8,8 +8,42 @@ def extract_page_data(page):
     page_list = list(page)
     page_iter = iter(page_list)
 
-    images = []
+    # creates a list of all prices
+    prices = []
+    discount = {"readable": "0.00", "number": 0}
+    price_pattern = re.compile(r"^(- )?[$£]\d*\.\d{2}$")
+    for element in page_list:
+        if not isinstance(element, LTText):
+            continue
+        text = element.get_text()
+        if not re.match(price_pattern, text):
+            continue
+        # Handles discounts
+        if text.startswith("-"):
+            price_readable = f"- {text[2:-1]}"
+            price_number = float(f"-{text[3:-1]}")
+            discount = {"readable": price_readable, "number": price_number}
+            continue
+        # Handles all other prices found
+        price_readable = text[:-1]
+        price_number = float(text[1:-1])
+        prices.append({"readable": price_readable, "number": price_number})
+
     order_data = {}
+    prices_iter = iter(prices)
+
+    order_data["item_total"] = next(prices_iter)["readable"]
+    order_data["has_discount"] = discount["number"] != 0
+    if order_data["has_discount"]:
+        order_data["shop_discount"] = discount["readable"]
+        order_data["subtotal"] = next(prices_iter)["readable"]
+    # Some states don't have tax, skip the tax field if they don't have enough fields to indicate that there's a tax.
+    if len(prices) >= (6 if order_data["has_discount"] else 4):
+        order_data["tax"] = next(prices_iter)["readable"]
+    order_data["shipping_total"] = next(prices_iter)["readable"]
+    order_data["order_total"] = next(prices_iter)["readable"]
+
+    images = []
 
     def get_next_element():
         return next(page_iter).get_text()[:-1]
@@ -44,24 +78,6 @@ def extract_page_data(page):
                 shop_info = text.split("\n")
                 order_data["shop_name"] = shop_info[0]
                 order_data["shop_url"] = shop_info[1]
-            elif text == "Item total":
-                # Skips the item total, tax, shipping total, and order total
-                has_discount = get_next_element() == "Shop discount"
-                next(page_iter)
-                order_data["has_discount"] = False
-                # Additionally, skip two more if there's a discount
-                if has_discount:
-                    order_data["has_discount"] = True
-                    next(page_iter)
-                    next(page_iter)
-                next(page_iter)
-                order_data["item_total"] = get_next_element()
-                if has_discount:
-                    order_data["shop_discount"] = get_next_element()
-                    order_data["subtotal"] = get_next_element()
-                order_data["tax"] = get_next_element()
-                order_data["shipping_total"] = get_next_element()
-                order_data["order_total"] = get_next_element()
             elif text.startswith("From\n"):
                 order_data["ship_from"] = text[5:]
             elif text.startswith("Order\n"):

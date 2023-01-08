@@ -45,9 +45,6 @@ def extract_page_data(page):
 
     images = []
 
-    def get_next_element():
-        return next(page_iter).get_text()[:-1]
-
     # Item extraction
     order_data["items"] = []
     quantity_pattern = re.compile(r"\d* x [$£]\d*\.\d{2}")

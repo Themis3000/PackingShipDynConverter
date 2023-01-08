@@ -1,6 +1,6 @@
 # PackingShipDynConverter
 
-Converts etsy packing slip pdf's into a smaller under 4 inch wide packing slip for the purpose of fitting into 4x8 envelopes with no folding. Made for 4x6 labels
+Converts etsy packing slip pdf's into a smaller under 4 inch wide packing slip for the purpose of fitting into 4x8 envelopes with minimal folding. Made for 4x6 labels
 
 ## Why?
 

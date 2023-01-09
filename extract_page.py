@@ -96,5 +96,7 @@ def extract_page_data(page):
                 order_data["has_shipping_info"] = True
                 order_data["tracking_number"] = tracking_data[1]
                 order_data["tracking_via"] = tracking_data[2]
+            elif text.startswith("Note from buyer\n"):
+                order_data["note"] = text[16:]
 
     return order_data, images

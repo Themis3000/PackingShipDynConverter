@@ -32,6 +32,8 @@ def page_builder(order_data, images):
         bottom_content += use_component("summaryItem", {"title": "Tax", "value": order_data["tax"]})
     bottom_content += use_component("summaryItem", {"title": "Shipping total", "value": order_data["shipping_total"]})
     bottom_content += use_component("summaryItem", {"title": "Order total", "value": order_data["order_total"]})
+    if "note" in order_data:
+        bottom_content += use_component("value", {"title": "Note from buyer", "value": order_data["note"]})
 
     label_body_content = ""
     if PRINT_LABEL:

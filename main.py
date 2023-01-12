@@ -8,7 +8,7 @@ for page in pages:
     order_data, images = extract_page_data(page)
     print(order_data)
     slip_html, label_html = page_builder(order_data, images)
-    with open(f"./out/{order_data['buyer_name']}_slip.html", "w", encoding="utf-16") as f:
+    with open(f"./out/{order_data['buyer_name']}_slip_{order_data['order_number']}.html", "w", encoding="utf-16") as f:
         f.write(template_values(html_out, {"body": slip_html}))
-    with open(f"./out/{order_data['buyer_name']}_label.html", "w", encoding="utf-16") as f:
+    with open(f"./out/{order_data['buyer_name']}_label_{order_data['order_number']}.html", "w", encoding="utf-16") as f:
         f.write(template_values(html_out, {"body": label_html}))

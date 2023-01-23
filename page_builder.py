@@ -2,7 +2,7 @@ import glob
 import os
 import base64
 from io import BytesIO
-from config import PRINT_LABEL, LABEL_REMOVE_LAST_LINE
+from config import PRINT_LABEL, LABEL_REMOVE_LAST_LINE, SLIP_NOTE
 
 
 def page_builder(order_data, images):
@@ -62,7 +62,8 @@ def page_builder(order_data, images):
         "logo_b64": img_to_str(images[0]),
         "name": order_data["shop_name"],
         "url": order_data["shop_url"],
-        "label": label_body_content
+        "label": label_body_content,
+        "note_text": SLIP_NOTE
     })
 
     return slip_body_content, label_body_content

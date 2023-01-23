@@ -4,3 +4,5 @@ PRINT_LABEL = True
 # The last line on the address is the country name, which is likely not necessary for sending in the mail. You may
 # remove the last line if you wish.
 LABEL_REMOVE_LAST_LINE = True
+# Adds custom note to the bottom of each slip
+SLIP_NOTE = ""

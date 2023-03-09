@@ -2,7 +2,7 @@ import glob
 import os
 import base64
 from io import BytesIO
-from config import PRINT_LABEL, LABEL_REMOVE_LAST_LINE, SLIP_NOTE
+from config import LABEL_REMOVE_LAST_LINE, SLIP_NOTE
 
 
 def page_builder(order_data, images):
@@ -36,13 +36,12 @@ def page_builder(order_data, images):
         bottom_content += use_component("value", {"title": "Note from buyer", "value": order_data["note"]})
 
     label_body_content = ""
-    if PRINT_LABEL:
-        return_addr = order_data["ship_from"]
-        send_addr = order_data["ship_to"]
-        if LABEL_REMOVE_LAST_LINE:
-            return_addr = remove_last_line(return_addr)
-            send_addr = remove_last_line(send_addr)
-        label_body_content = use_component("label", {"return_addr": return_addr, "send_addr": send_addr})
+    return_addr = order_data["ship_from"]
+    send_addr = order_data["ship_to"]
+    if LABEL_REMOVE_LAST_LINE:
+        return_addr = remove_last_line(return_addr)
+        send_addr = remove_last_line(send_addr)
+    label_body_content = use_component("label", {"return_addr": return_addr, "send_addr": send_addr})
 
     for item_num, item in enumerate(order_data["items"]):
         img_str = img_to_str(images[item_num + 1])
